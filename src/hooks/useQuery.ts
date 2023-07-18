@@ -58,14 +58,15 @@ const useQuery = ({ keyword = "" }: useQueryProps) => {
 
   useEffect(() => {
     const data = getLocalCache(keyword);
-
     const handler = () => {
       if (data) setState((prev) => ({ ...prev, data }));
       if (keyword === "") setState((prev) => ({ ...prev, data: [] }));
       if (keyword !== "" && !data) {
+        console.log("calling api");
         setState((prev) => ({ ...prev, loading: true }));
         fetch(DB_URL + `sick?q=${keyword}`)
           .then((res) => res.json())
+          .catch((e) => setState((prev) => ({ ...prev, error: e })))
           .then((data) => {
             const filterData = FilterData(data, keyword);
             setState((prev) => ({ ...prev, data: filterData }));

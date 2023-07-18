@@ -1,0 +1,74 @@
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+interface ISearchData {
+  sickCd: string;
+  sickNm: string;
+}
+
+interface GetSearchData {
+  data: ISearchData[];
+  expire: number;
+}
+
+interface IGetSearchCache {
+  [keyword: string]: GetSearchData;
+}
+
+const GetCacheItem = createContext<{
+  (keyword: string): ISearchData[] | undefined;
+} | null>(null);
+const SetCacheItem = createContext<{
+  (data: ISearchData[], keyword: string): any;
+} | null>(null);
+
+export const useGetCache = () => useContext(GetCacheItem);
+export const useSetCache = () => useContext(SetCacheItem);
+
+const CacheProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const [cache, setCache] = useState<IGetSearchCache>();
+  const setCacheData = useCallback((data: ISearchData[], keyword: string) => {
+    setCache((prev) => {
+      return { ...prev, [keyword]: { data, expire: Date.now() + 50000 } };
+    });
+  }, []);
+  const getCacheData = useCallback(
+    (keyword: string) => {
+      if (cache) return cache[keyword]?.data;
+    },
+    [cache]
+  );
+
+  useEffect(() => {
+    const handleCleanCache = () => {
+      if (cache && Object.keys(cache).length !== 0) {
+        const keys = Object.keys(cache).filter(
+          (key) => cache[key].expire < Date.now()
+        );
+        if (keys.length !== 0)
+          setCache((prev) => {
+            const copyObj = { ...prev };
+            keys.forEach((key) => delete copyObj[key]);
+            return copyObj;
+          });
+      }
+    };
+    const interval = setInterval(handleCleanCache, 1000);
+    return () => clearInterval(interval);
+  }, [cache]);
+
+  return (
+    <SetCacheItem.Provider value={setCacheData}>
+      <GetCacheItem.Provider value={getCacheData}>
+        {children}
+      </GetCacheItem.Provider>
+    </SetCacheItem.Provider>
+  );
+};
+
+export default CacheProvider;

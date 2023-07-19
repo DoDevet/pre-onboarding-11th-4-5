@@ -208,9 +208,11 @@ input에 한글을 작성한 뒤 버튼을 누르게 되면 버튼이 두번 동
 
 이를 방지하기 위해 isComposing 옵션으로 필터링 함.
 
+키보드로 이동중에 keyword가 변경되는것을 방지하기 위해 listInfo state를 따로 만들었고
+
 data list들은 a 태그로 매핑했기에 useEffect에서 버튼이 눌려 searchListNum의 변화가 일어나게 되면 
 
-해당 a 태그의 innterText를 가져와 listInfo에 저장하도록 했다.
+해당 a 태그의 innerText를 가져와 listInfo에 저장하도록 했다.
 
   ```jsx
   const onKeyControl = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -246,4 +248,5 @@ data list들은 a 태그로 매핑했기에 useEffect에서 버튼이 눌려 sea
     ControlKey();
   }, [data, divRef, searchListNum]);
   ```
+![he](https://github-production-user-asset-6210df.s3.amazonaws.com/77131309/254498256-4d21103c-1a91-4b04-bfb3-e1d870bc239b.gif)
 

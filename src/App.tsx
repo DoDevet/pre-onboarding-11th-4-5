@@ -30,8 +30,9 @@ function App() {
         else setSearchListNum((prev) => prev - 1);
       }
       if (e.code === "Enter") {
-        setInput(listInfo);
+        if (listInfo) setInput(listInfo);
         setListInfo("");
+        return;
       }
     }
   };
@@ -65,7 +66,15 @@ function App() {
       <h1 className="py-10 mt-10 text-[38px] font-bold text-center">
         국내 모든 임상시험 검색하고 온라인으로 참여하기
       </h1>
-      <form className="relative w-full" onSubmit={(e) => e.preventDefault()}>
+      <form
+        className="relative w-full"
+        onSubmit={(e) => {
+          e.preventDefault();
+          alert(input);
+          setInput("");
+          setListInfo("");
+        }}
+      >
         <input
           className="w-full px-4 py-6 rounded-full outline-none focus:ring-blue-500 focus:ring-2"
           placeholder="질환명을 입력해주세요"

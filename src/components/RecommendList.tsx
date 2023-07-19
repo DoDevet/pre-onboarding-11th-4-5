@@ -34,6 +34,7 @@ const RecommendList = ({
                   <SearchIcon className="w-3 h-3 text-gray-500" />
                   <a
                     href="/"
+                    onClick={() => alert(data.sickNm)}
                     className={`w-full rounded-md outline-none cursor-pointer ${
                       index === focus && "ring-2 ring-blue-500 ring-offset-2"
                     }`}

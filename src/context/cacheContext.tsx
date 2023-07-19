@@ -5,18 +5,10 @@ import {
   useEffect,
   useState,
 } from "react";
+import { ISearchData } from "../types/responseData";
+import { GetSearchData } from "../types/cache";
 
-interface ISearchData {
-  sickCd: string;
-  sickNm: string;
-}
-
-interface GetSearchData {
-  data: ISearchData[];
-  expire: number;
-}
-
-interface IGetSearchCache {
+export interface IGetSearchCache {
   [keyword: string]: GetSearchData;
 }
 
@@ -27,6 +19,8 @@ const SetCacheItem = createContext<{
   (data: ISearchData[], keyword: string): any;
 } | null>(null);
 
+const EXPIRE_TIME = 5000;
+
 export const useGetCache = () => useContext(GetCacheItem);
 export const useSetCache = () => useContext(SetCacheItem);
 
@@ -34,7 +28,7 @@ const CacheProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [cache, setCache] = useState<IGetSearchCache>();
   const setCacheData = useCallback((data: ISearchData[], keyword: string) => {
     setCache((prev) => {
-      return { ...prev, [keyword]: { data, expire: Date.now() + 50000 } };
+      return { ...prev, [keyword]: { data, expire: Date.now() + EXPIRE_TIME } };
     });
   }, []);
   const getCacheData = useCallback(
@@ -45,20 +39,22 @@ const CacheProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   );
 
   useEffect(() => {
-    const handleCleanCache = () => {
+    const handleCleanCache = (cache?: IGetSearchCache) => {
       if (cache && Object.keys(cache).length !== 0) {
         const keys = Object.keys(cache).filter(
           (key) => cache[key].expire < Date.now()
         );
-        if (keys.length !== 0)
+        if (keys.length !== 0) {
+          console.log("Delete Keys: ", keys);
           setCache((prev) => {
             const copyObj = { ...prev };
             keys.forEach((key) => delete copyObj[key]);
             return copyObj;
           });
+        }
       }
     };
-    const interval = setInterval(handleCleanCache, 1000);
+    const interval = setInterval(() => handleCleanCache(cache), 1000);
     return () => clearInterval(interval);
   }, [cache]);
 

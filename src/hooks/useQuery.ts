@@ -1,28 +1,18 @@
 import { useEffect, useState } from "react";
 import { useGetCache, useSetCache } from "../context/cacheContext";
-import { FilterData } from "../utils/filterData";
+import { IStateProps } from "../types/usequey";
 
 const DB_URL = "http://localhost:4000/";
 
 interface useQueryProps {
   keyword: string;
 }
-export interface ISearchData {
-  sickCd: string;
-  sickNm: string;
-}
-
-interface IStateProps {
-  data?: ISearchData[];
-  error?: any;
-  loading: boolean;
-}
 
 const useQuery = ({ keyword = "" }: useQueryProps) => {
   const [state, setState] = useState<IStateProps>({
     data: undefined,
     error: undefined,
-    loading: false,
+    loading: true,
   });
   const setCache = useSetCache();
   const getCache = useGetCache();
@@ -31,7 +21,7 @@ const useQuery = ({ keyword = "" }: useQueryProps) => {
     const data = getCache ? getCache(keyword) : null;
     const handler = () => {
       if (data) setState((prev) => ({ ...prev, data }));
-      if (keyword === "") setState((prev) => ({ ...prev, data: [] }));
+      if (keyword === "") setState((prev) => ({ ...prev, data: undefined }));
       if (keyword !== "" && !data && setCache) {
         console.log("calling api");
         setState((prev) => ({ ...prev, loading: true }));
@@ -39,9 +29,8 @@ const useQuery = ({ keyword = "" }: useQueryProps) => {
           .then((res) => res.json())
           .catch((e) => setState((prev) => ({ ...prev, error: e })))
           .then((data) => {
-            const filterData = FilterData(data, keyword);
-            setState((prev) => ({ ...prev, data: filterData }));
-            setCache(filterData, keyword);
+            setState((prev) => ({ ...prev, data }));
+            setCache(data, keyword);
             return data;
           })
           .catch((e) => setState((prev) => ({ ...prev, error: e })))

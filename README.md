@@ -61,7 +61,6 @@
         );
         // Expire 데이터들의 키를 수집함
         if (keys.length !== 0) { // 캐시 데이터 삭제
-          console.log("Delete Keys: ", keys);
           setCache((prev) => {
             const copyObj = { ...prev };
             keys.forEach((key) => delete copyObj[key]);
@@ -74,7 +73,7 @@
     const interval = setInterval(() => handleCleanCache(cache), 1000); // 매 1초마다 실행
     return () => clearInterval(interval); }, [cache]);
     ```
-    1초마다 실행되는 코드로, expire time을 넘은 키값들을 수집하여 삭제한다.
+    1초마다 실행되는 코드로, expire time을 넘은 캐시들의 키값을 수집하여 삭제한다.
 
   + Context Api
     ```jsx
@@ -196,11 +195,11 @@ export default useQuery;
   const [keyword, setKeyword] = useState("");
   const { data, loading } = useQuery({ keyword });
   useEffect(() => {
-      const interval = setInterval(() => setKeyword(input), 500);
+      const interval = setInterval(() => setKeyword(input), DELAY);
       return () => clearInterval(interval);
     }, [input]);
   ```
-  useQuery에 keyword를 넘기기 전 0.5초 딜레이를 주었다.
+  useQuery에 keyword를 넘기기 전 딜레이(0.5초)를 주었다.
 
 ## 키보드만으로 추천 검색어들로 이동 가능하도록 구현
 

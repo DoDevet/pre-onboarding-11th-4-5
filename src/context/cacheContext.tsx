@@ -19,7 +19,7 @@ const SetCacheItem = createContext<{
   (data: ISearchData[], keyword: string): any;
 } | null>(null);
 
-const EXPIRE_TIME = 5000;
+const EXPIRE_TIME = 10000;
 
 export const useGetCache = () => useContext(GetCacheItem);
 export const useSetCache = () => useContext(SetCacheItem);

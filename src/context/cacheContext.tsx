@@ -45,7 +45,6 @@ const CacheProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
           (key) => cache[key].expire < Date.now()
         );
         if (keys.length !== 0) {
-          console.log("Delete Keys: ", keys);
           setCache((prev) => {
             const copyObj = { ...prev };
             keys.forEach((key) => delete copyObj[key]);

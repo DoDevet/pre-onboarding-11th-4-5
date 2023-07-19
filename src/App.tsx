@@ -3,7 +3,7 @@ import useQuery from "./hooks/useQuery";
 import RecommendList from "./components/RecommendList";
 import SearchIcon from "./components/SearchIcon";
 import { FirstImage, SecondImage, TthirdImage } from "./components/SvgImages";
-
+const DELAY = 500;
 function App() {
   const [input, setInput] = useState("");
   const [keyword, setKeyword] = useState("");
@@ -53,7 +53,7 @@ function App() {
   }, [data, divRef, searchListNum]);
 
   useEffect(() => {
-    const interval = setInterval(() => setKeyword(input), 500);
+    const interval = setInterval(() => setKeyword(input), DELAY);
     return () => clearInterval(interval);
   }, [input]);
 
